@@ -44,10 +44,14 @@ for i, pin in enumerate(PINS):
 hold = digitalio.DigitalInOut(GP16)
 hold.switch_to_input(pull=digitalio.Pull.DOWN)
 
+sustain_pedal = digitalio.DigitalInOut(GP17)
+sustain_pedal.switch_to_input(pull=digitalio.Pull.DOWN)
+
 last_note = None
 
 while True:
     held = hold.value
+    sustained = sustain_pedal.value
     
     for note_button in note_buttons:
         if note_button.get_value() and not note_button.is_on:
@@ -62,5 +66,3 @@ while True:
             note_button.off()
             last_note = note_button
                 
-
-
