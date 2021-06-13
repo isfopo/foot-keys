@@ -16,13 +16,14 @@ class NoteButton:
         self.midi = midi
         self.is_on = False
         self.is_held = False
+        self.is_sustained = False
         
     def on(self):
         self.midi.send(NoteOn(self.note))
         self.is_on = True
         
     def off(self):
-        if not self.is_held:
+        if not self.is_held and not self.is_sustained:
             self.midi.send(NoteOff(self.note))    
         self.is_on = False
         
@@ -48,10 +49,12 @@ sustain_pedal = digitalio.DigitalInOut(GP17)
 sustain_pedal.switch_to_input(pull=digitalio.Pull.DOWN)
 
 last_note = None
+was_sustained = None
+sustained_notes = []
 
 while True:
     held = hold.value
-    sustained = sustain_pedal.value
+    is_sustained = sustain_pedal.value 
     
     for note_button in note_buttons:
         if note_button.get_value() and not note_button.is_on:
@@ -63,6 +66,15 @@ while True:
         elif not note_button.get_value() and note_button.is_on:
             if held:
                note_button.is_held = True
+            if is_sustained:
+                note_button.is_sustained = True
+                sustained_notes.append(note_button)
             note_button.off()
             last_note = note_button
                 
+    if was_sustained and not is_sustained:
+        for note_button in sustained_notes:
+            note_button.is_sustained = False
+            note_button.off()
+    
+    was_sustained = is_sustained
