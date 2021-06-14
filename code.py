@@ -49,11 +49,12 @@ sustain_pedal = digitalio.DigitalInOut(GP17)
 sustain_pedal.switch_to_input(pull=digitalio.Pull.DOWN)
 
 last_note = None
+was_held = None
 was_sustained = None
 sustained_notes = []
 
 while True:
-    held = hold.value
+    is_held = hold.value
     is_sustained = sustain_pedal.value 
     
     for note_button in note_buttons:
@@ -64,17 +65,22 @@ while True:
             note_button.on()
             
         elif not note_button.get_value() and note_button.is_on:
-            if held:
+            if is_held:
                note_button.is_held = True
             if is_sustained:
                 note_button.is_sustained = True
                 sustained_notes.append(note_button)
             note_button.off()
             last_note = note_button
-                
+    
+    if was_held and not is_held:
+        last_note.is_held = False
+        last_note.off()
+    
     if was_sustained and not is_sustained:
         for note_button in sustained_notes:
             note_button.is_sustained = False
             note_button.off()
-    
+            
+    was_held = is_held
     was_sustained = is_sustained
