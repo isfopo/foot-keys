@@ -78,7 +78,6 @@ while True:
         if note_button.get_value() and not note_button.is_on:
             if last_note and last_note.is_held:
                 last_note.is_held = False
-                print(last_note.is_octave_up)
                 if not last_note.is_octave_up:
                     last_note.off()
                 else:
