@@ -45,7 +45,7 @@ class NoteButton:
 
 midi = adafruit_midi.MIDI(midi_out=usb_midi.ports[1], out_channel=0)
 
-STARTING_NOTE = 12
+STARTING_NOTE = 24
 
 PINS = [GP3, GP4, GP5, GP6, GP7, GP8, GP9, GP10, GP11, GP12, GP13, GP14, GP15]
 
